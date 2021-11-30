@@ -1,6 +1,6 @@
 FROM adoptopenjdk/openjdk11:alpine-slim
 
-ARG VELOCITY_VERSION=3.0.0
+ARG VELOCITY_VERSION=3.1.0
 ENV VELOCITY_JAR_URL=https://versions.velocitypowered.com/download/${VELOCITY_VERSION}.jar
 
 RUN mkdir /velocity
