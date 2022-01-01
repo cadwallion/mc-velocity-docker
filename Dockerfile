@@ -1,15 +1,15 @@
-FROM adoptopenjdk/openjdk11:alpine-slim
+FROM ruby:3 AS builder
+ARG VELOCITY_VERSION=3.1.1
+COPY fetch-velocity.rb .
+RUN ruby fetch-velocity.rb $VELOCITY_VERSION
 
-ARG VELOCITY_VERSION=3.1.0
-ENV VELOCITY_JAR_URL=https://versions.velocitypowered.com/download/${VELOCITY_VERSION}.jar
-
+FROM adoptopenjdk/openjdk11:alpine-slim AS production
 RUN mkdir /velocity
 WORKDIR /velocity
-RUN wget -O velocity.jar $VELOCITY_JAR_URL
-
 RUN mkdir plugins
 RUN mkdir logs
 COPY velocity.toml .
 COPY run.sh .
+COPY --from=builder velocity.jar .
 
 CMD ["/velocity/run.sh"]
