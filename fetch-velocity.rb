@@ -7,12 +7,17 @@ class VelocityVersion
   attr_reader :build_info, :version
 
   def initialize(version)
-    @version = version
+    if match = version.match(/(?<version>[\d\.]+-SNAPSHOT)-(?<build>\d+)/)
+      @version  = match[:version]
+      @build    = match[:build]
+    else
+      @version  = version
+    end
   end
 
   def download_path
     if has_builds?
-      @build_info = get_latest_promoted_build || get_build_info(build_numbers.last)
+      @build_info = get_build_info(@build) || get_latest_promoted_build || get_build_info(build_numbers.last)
       return get_download_path_for_build(build_info)
     end
   end
@@ -37,7 +42,7 @@ class VelocityVersion
   end
 
   def get_build_info(build_number)
-    fetch("/projects/velocity/versions/#{version}/builds/#{build_number}")
+    build_number && fetch("/projects/velocity/versions/#{version}/builds/#{build_number}")
   end
 
   def get_download_path_for_build(build_info)
